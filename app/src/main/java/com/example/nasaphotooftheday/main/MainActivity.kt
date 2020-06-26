@@ -23,6 +23,7 @@ import com.example.extension.toJsonObj
 import com.example.extension.toUri
 import com.example.nasaphotooftheday.AppConstant
 import com.example.nasaphotooftheday.BR
+import com.example.nasaphotooftheday.HelperClass
 import com.example.nasaphotooftheday.R
 import com.example.nasaphotooftheday.databinding.ActivityMainBinding
 import com.example.nasaphotooftheday.model.Response
@@ -47,6 +48,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
     val compositeDisposable = CompositeDisposable()
     private var url: String? = null
     private var isImage = false
+    private var hasImage = false
     private var imageUri: Uri? = null
 
     override fun getLayout(): Int = R.layout.activity_main
@@ -79,10 +81,10 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
 
     private fun initView() {
         iv_calender.setOnClickListener {
-            imageUri?.let { showDatePickerDialog() }
+            if (hasImage) showDatePickerDialog()
         }
         iv_icon.setOnClickListener {
-            openFullScreenActivity()
+            if (hasImage) openFullScreenActivity()
         }
     }
 
@@ -121,6 +123,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 rl_main.background = null
             }
+            hasImage = false
             mainViewModel.photoByDate(it)
         })
     }
@@ -128,15 +131,20 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
     private fun updateUI(response: Response) {
         tv_title.setText(response.title)
         tv_description.setText(response.explanation)
-        url = response.url
+        loadGif()
         response.media_type?.let {
             if (it.equals("image")) {
                 isImage = true
-                loadGif()
-                loadImage()
+                url = response.hdurl
+                loadImage(url!!)
                 iv_icon.setImageDrawable(resources.getDrawable(R.drawable.ic_zoom_24dp))
             } else {
                 isImage = false
+                url = response.url
+                val videoId = HelperClass.getVideoId(response.url!!)
+                val thumbnailUrl =
+                    AppConstant.IMG_URL_PREFEX + videoId + AppConstant.IMG_URL_SUFFEX
+                loadImage(thumbnailUrl)
                 iv_icon.setImageDrawable(resources.getDrawable(R.drawable.ic_play_arrow_black_24dp))
             }
         }
@@ -174,10 +182,10 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
 
     }
 
-    private fun loadImage() {
+    private fun loadImage(url: String) {
         compositeDisposable.add(
             Observable.create(ObservableOnSubscribe<Bitmap> { emitter ->
-                val url = URL(this.url)
+                val url = URL(url)
                 val bitmap: Bitmap? =
                     BitmapFactory.decodeStream(url.openConnection().getInputStream())
                 if (bitmap != null) {
@@ -197,13 +205,14 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
     }
 
     private fun loadBitmapImage(bitmap: Bitmap?) {
-        imageUri = bitmap?.toUri(this)
+        imageUri = if (isImage) bitmap?.toUri(this) else null
         iv_image.setImageBitmap(bitmap)
         val drawable = BitmapDrawable(resources, bitmap)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             rl_main.background = drawable
             rl_main.background.alpha = 127
         }
+        hasImage = true
     }
 
     private fun showDialogBox() {
@@ -214,7 +223,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
                 "Yes"
             ) { dialog, which ->
                 dialog.dismiss()
-                loadImage()
+                loadImage(url!!)
             }
             .setNegativeButton("No") { dialog, which -> dialog.dismiss() }
             .setCancelable(false)
