@@ -3,13 +3,13 @@ package com.example.base
 import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
-import io.reactivex.plugins.RxJavaPlugins
+import androidx.lifecycle.ViewModel
 
 
-abstract class BaseActivity<T:ViewDataBinding,V : androidx.lifecycle.ViewModel> :
-  androidx.appcompat.app.AppCompatActivity() {
+abstract class BaseActivity<T:ViewDataBinding,V : ViewModel> :AppCompatActivity() {
 
   private lateinit var viewDataBinding: ViewDataBinding
   private var viewModel: V? = null

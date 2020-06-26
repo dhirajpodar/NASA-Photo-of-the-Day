@@ -31,6 +31,6 @@ class SplashViewModel: BaseViewModel() {
   }
 
   fun initRetrofit(apiKey: String) : Observable<Response> {
-    return Repository(apiKey).getObservable()
+    return Repository().getObservable()
   }
 }

@@ -1,4 +1,9 @@
 <resources>
-  <string name="app_name">NASA Photo Of The Day</string>
-  <string name="API_KEY">sBioDQXl66F5S2Dh0vCeZvwJhy9mzahtcA0t0qqx</string>
+    <string name="app_name">NASA Photo Of The Day</string>
+    <string name="API_KEY">sBioDQXl66F5S2Dh0vCeZvwJhy9mzahtcA0t0qqx</string>
+
+    <string name="title_activity_fullscreen">FullscreenActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+
 </resources>
