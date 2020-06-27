@@ -34,7 +34,8 @@
                         android:id="@+id/tv_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_toLeftOf="@id/iv_calender"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentLeft="true"
                         android:text="Title"
                         android:textSize="30sp"
                         android:textStyle="bold" />
@@ -45,7 +46,8 @@
                         android:layout_height="30dp"
                         android:layout_alignParentEnd="true"
                         android:layout_alignParentRight="true"
-                        android:background="@drawable/ic_calender" />
+                        android:background="@drawable/ic_calender"
+                        android:backgroundTint="@color/colorPrimaryDark" />
                 </RelativeLayout>
 
 
@@ -75,7 +77,7 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
             android:layout_margin="12dp"
-            android:backgroundTint="#673AB7" />
+            android:backgroundTint="@color/colorAccent" />
 
         <RelativeLayout
             android:id="@+id/rl_progressBar"
