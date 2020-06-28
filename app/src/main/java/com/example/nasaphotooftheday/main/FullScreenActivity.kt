@@ -1,8 +1,6 @@
 package com.example.nasaphotooftheday.main
 
-import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.example.nasaphotooftheday.utils.AppConstant
@@ -32,7 +30,7 @@ class FullScreenActivity : AppCompatActivity(), YouTubePlayer.OnInitializedListe
                 uri?.let { iv_fullImage.setImageURI(it) }
             } else {
                 val url = it.getStringExtra("url")
-                videoId = url?.let { HelperClass.getVideoId(it)  }
+                videoId = url?.let { HelperClass.getVideoId(it) }
                 videoId?.let { loadVideo() }
 
             }
@@ -52,8 +50,6 @@ class FullScreenActivity : AppCompatActivity(), YouTubePlayer.OnInitializedListe
         p1: YouTubePlayer?,
         p2: Boolean
     ) {
-        Log.d("TAG", "Success initlizaiton")
-//        p1!!.setPlayerStyle(YouTubePlayer.PlayerStyle.MINIMAL)
         p1?.let {
             it.setShowFullscreenButton(false)
             if (!p2) {
@@ -80,6 +76,7 @@ class FullScreenActivity : AppCompatActivity(), YouTubePlayer.OnInitializedListe
     override fun onInitializationFailure(
         p0: YouTubePlayer.Provider?,
         p1: YouTubeInitializationResult?
-    ) {}
+    ) {
+    }
 
 }

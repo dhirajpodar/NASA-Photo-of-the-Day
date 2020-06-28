@@ -116,7 +116,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
         })
 
         date.observe(this, Observer {
-            loadGif()
+            iv_image.setImageDrawable(null)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 rl_main.background = null
             }
@@ -126,9 +126,9 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
     }
 
     private fun updateUI(response: Response) {
+        loadGif()
         tv_title.text = response.title
         tv_description.text = response.explanation
-        loadGif()
         response.media_type?.let {
             if (it == MediaType.IMAGE.value) {
                 url = response.hdurl
@@ -179,10 +179,10 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
             DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
                 val m = month + 1
                 var dayOfMonthInString = dayOfMonth.toString()
-                if (dayOfMonth < 10) dayOfMonthInString = "0" + "$dayOfMonth"
+                if (dayOfMonth < 10) dayOfMonthInString = "0$dayOfMonth"
                 val monthInString: String
 
-                monthInString = if (m < 10) "0" + "$m" else "$m"
+                monthInString = if (m < 10) "0$m" else "$m"
 
                 date.value = "$year-$monthInString-$dayOfMonthInString"
 
@@ -197,9 +197,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
     private fun loadImage(urlInString: String) {
         compositeDisposable.add(
             Observable.create(ObservableOnSubscribe<Bitmap> { emitter ->
-                val url = URL(urlInString)
-                val bitmap: Bitmap? =
-                    BitmapFactory.decodeStream(url.openConnection().getInputStream())
+                val bitmap: Bitmap? = HelperClass.getBitmap(this, urlInString)
                 if (bitmap != null) {
                     emitter.onNext(bitmap)
                 } else {
@@ -232,7 +230,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
         .setMessage(getString(R.string.msg_dialog))
         .setPositiveButton(
             getString(R.string.title_yes)
-        ) { dialog, which ->
+        ) { dialog, _ ->
             dialog.dismiss()
             loadImage(url!!)
         }
