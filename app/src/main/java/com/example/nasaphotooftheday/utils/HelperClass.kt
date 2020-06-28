@@ -1,4 +1,4 @@
-package com.example.nasaphotooftheday
+package com.example.nasaphotooftheday.utils
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern

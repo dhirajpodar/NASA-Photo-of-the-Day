@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">NASA Photo Of The Day</string>
     <string name="photo_of_the_day">Photo Of the Day</string>
+    <string name="msg_dialog">Could not download image. Do you want to try again?</string>
+    <string name="title_error">Error</string>
+    <string name="title_yes">Yes</string>
+    <string name="title_no">No</string>
 
 
 </resources>

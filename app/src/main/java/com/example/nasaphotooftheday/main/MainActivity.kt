@@ -1,6 +1,5 @@
 package com.example.nasaphotooftheday.main
 
-import android.app.ActivityOptions
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.content.Context
@@ -11,33 +10,31 @@ import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import androidx.fragment.app.Fragment
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.example.base.BaseActivity
 import com.example.extension.toJsonObj
 import com.example.extension.toUri
-import com.example.nasaphotooftheday.AppConstant
+import com.example.nasaphotooftheday.utils.AppConstant
 import com.example.nasaphotooftheday.BR
-import com.example.nasaphotooftheday.HelperClass
+import com.example.nasaphotooftheday.utils.HelperClass
 import com.example.nasaphotooftheday.R
 import com.example.nasaphotooftheday.databinding.ActivityMainBinding
 import com.example.nasaphotooftheday.model.Response
-import com.google.android.youtube.player.YouTubeBaseActivity
-import com.google.android.youtube.player.YouTubeInitializationResult
-import com.google.android.youtube.player.YouTubePlayer
-import com.google.android.youtube.player.YouTubePlayerSupportFragment
+import com.example.nasaphotooftheday.splash.SplashActivity
+import com.example.nasaphotooftheday.utils.MediaType
 import io.reactivex.Observable
 import io.reactivex.ObservableOnSubscribe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
-import java.net.URI
 import java.net.URL
 import java.util.*
 
@@ -45,10 +42,10 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
 
     private lateinit var mainViewModel: MainViewModel
     private var date = MutableLiveData<String>()
-    val compositeDisposable = CompositeDisposable()
+    private val compositeDisposable = CompositeDisposable()
     private var url: String? = null
     private var isImage = false
-    private var hasImage = false
+    private var containsImage = false
     private var imageUri: Uri? = null
 
     override fun getLayout(): Int = R.layout.activity_main
@@ -57,7 +54,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
 
     override fun getContext(): Context = this
 
-    override fun getViewModel(): MainViewModel = ViewModelProviders.of(this).get(
+    override fun getViewModel(): MainViewModel = ViewModelProvider(this).get(
         MainViewModel::class.java
     )
 
@@ -70,7 +67,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
     }
 
     private fun initIntent() {
-        var responseInString = intent.getStringExtra("data")!!
+        val responseInString = intent.getStringExtra("data")!!
         val response = responseInString.toJsonObj(Response::class.java)
         updateUI(response)
     }
@@ -81,10 +78,10 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
 
     private fun initView() {
         iv_calender.setOnClickListener {
-            if (hasImage) showDatePickerDialog()
+            if (containsImage) showDatePickerDialog()
         }
         iv_icon.setOnClickListener {
-            if (hasImage) openFullScreenActivity()
+            if (containsImage) openFullScreenActivity()
         }
     }
 
@@ -93,19 +90,19 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
         val intent = Intent(this, FullScreenActivity::class.java)
         if (isImage) {
             intent.putExtra("media_type", true)
-            intent.setData(imageUri)
+            intent.data = imageUri
         } else {
             intent.putExtra("media_type", false)
             intent.putExtra("url", url)
-            intent.setData(Uri.parse(url))
+            intent.data = Uri.parse(url)
         }
+        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+            this,
+            iv_image,
+            ViewCompat.getTransitionName(iv_image)!!
+        )
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                startActivity(
-                    intent,
-                    ActivityOptions.makeSceneTransitionAnimation(this).toBundle()
-                )
-            }
+            startActivity(intent, options.toBundle())
         } else {
             startActivity(intent)
         }
@@ -123,31 +120,45 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 rl_main.background = null
             }
-            hasImage = false
+            containsImage = false
             mainViewModel.photoByDate(it)
         })
     }
 
     private fun updateUI(response: Response) {
-        tv_title.setText(response.title)
-        tv_description.setText(response.explanation)
+        tv_title.text = response.title
+        tv_description.text = response.explanation
         loadGif()
         response.media_type?.let {
-            if (it.equals("image")) {
-                isImage = true
+            if (it == MediaType.IMAGE.value) {
                 url = response.hdurl
-                loadImage(url!!)
-                iv_icon.setImageDrawable(resources.getDrawable(R.drawable.ic_zoom_24dp))
-            } else {
-                isImage = false
+                updateUIForImage()
+            } else if (it == MediaType.VIDEO.value) {
                 url = response.url
-                val videoId = HelperClass.getVideoId(response.url!!)
-                val thumbnailUrl =
-                    AppConstant.IMG_URL_PREFEX + videoId + AppConstant.IMG_URL_SUFFEX
-                loadImage(thumbnailUrl)
-                iv_icon.setImageDrawable(resources.getDrawable(R.drawable.ic_play_arrow_black_24dp))
+                updateUIForVideo(url!!)
+
             }
         }
+    }
+
+    private fun updateUIForVideo(url: String) {
+        isImage = false
+        val videoId = HelperClass.getVideoId(url)
+        val thumbnailUrl =
+            AppConstant.IMG_URL_PREFEX + videoId + AppConstant.IMG_URL_SUFFEX
+        loadImage(thumbnailUrl)
+        iv_icon.setImageDrawable(
+            ContextCompat.getDrawable(
+                this,
+                R.drawable.ic_play_arrow_black_24dp
+            )
+        )
+    }
+
+    private fun updateUIForImage() {
+        isImage = true
+        loadImage(url!!)
+        iv_icon.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_zoom_24dp))
     }
 
 
@@ -164,6 +175,7 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
 
         val datePicker = DatePickerDialog(
             this,
+            R.style.DialogTheme,
             DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
                 val m = month + 1
                 var dayOfMonthInString = dayOfMonth.toString()
@@ -182,10 +194,10 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
 
     }
 
-    private fun loadImage(url: String) {
+    private fun loadImage(urlInString: String) {
         compositeDisposable.add(
             Observable.create(ObservableOnSubscribe<Bitmap> { emitter ->
-                val url = URL(url)
+                val url = URL(urlInString)
                 val bitmap: Bitmap? =
                     BitmapFactory.decodeStream(url.openConnection().getInputStream())
                 if (bitmap != null) {
@@ -212,24 +224,22 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>() {
             rl_main.background = drawable
             rl_main.background.alpha = 127
         }
-        hasImage = true
+        containsImage = true
     }
 
-    private fun showDialogBox() {
-        AlertDialog.Builder(this)
-            .setTitle("Error")
-            .setMessage("Could not download image. Do you want to try again?")
-            .setPositiveButton(
-                "Yes"
-            ) { dialog, which ->
-                dialog.dismiss()
-                loadImage(url!!)
-            }
-            .setNegativeButton("No") { dialog, which -> dialog.dismiss() }
-            .setCancelable(false)
-            .create()
-            .show()
-    }
+    private fun showDialogBox() = AlertDialog.Builder(this)
+        .setTitle(getString(R.string.title_error))
+        .setMessage(getString(R.string.msg_dialog))
+        .setPositiveButton(
+            getString(R.string.title_yes)
+        ) { dialog, which ->
+            dialog.dismiss()
+            loadImage(url!!)
+        }
+        .setNegativeButton(getString(R.string.title_no)) { dialog, _ -> dialog.dismiss() }
+        .setCancelable(false)
+        .create()
+        .show()
 
 
     override fun onDestroy() {

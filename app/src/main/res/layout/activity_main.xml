@@ -11,15 +11,42 @@
     </data>
 
     <RelativeLayout
+        android:id="@+id/rl_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <RelativeLayout
+            android:id="@+id/rl_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp">
+
+            <TextView
+                android:id="@+id/tv_toolbar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:text="NASA Photo Of the Day"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/iv_calender"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/ic_calender" />
+        </RelativeLayout>
+
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_below="@id/rl_toolbar">
 
             <RelativeLayout
-                android:id="@+id/rl_main"
+
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:padding="12dp">
@@ -36,18 +63,10 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
                         android:layout_alignParentLeft="true"
-                        android:text="Title"
                         android:textSize="30sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        tools:text="Title" />
 
-                    <ImageView
-                        android:id="@+id/iv_calender"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentRight="true"
-                        android:background="@drawable/ic_calender"
-                        android:backgroundTint="@color/colorPrimaryDark" />
                 </RelativeLayout>
 
 
@@ -56,7 +75,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="250dp"
                     android:layout_below="@id/rl_title"
-                    android:layout_marginTop="8dp" />
+                    android:layout_marginTop="8dp"
+                    android:transitionName="transition" />
 
                 <TextView
                     android:id="@+id/tv_description"
@@ -85,6 +105,7 @@
             android:layout_height="match_parent"
             android:background="#33000000"
             android:clickable="true"
+            android:focusable="true"
             android:visibility="gone">
 
             <ProgressBar

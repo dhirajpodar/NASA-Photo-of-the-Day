@@ -1,6 +1,6 @@
 package com.example.nasaphotooftheday.service
 
-import com.example.nasaphotooftheday.AppConstant
+import com.example.nasaphotooftheday.utils.AppConstant
 import com.example.nasaphotooftheday.model.Response
 import io.reactivex.Observable
 
