@@ -19,13 +19,11 @@ object HelperClass {
             "(?:embed|vi?)/([^/?]*)",
             "^([A-Za-z0-9\\-]*)"
         )
-        linkWithoutDomain(url)?.let {
-            for (regex in videoIdRegex) {
-                val compiledPattern = Pattern.compile(regex)
-                val matcher: Matcher = compiledPattern.matcher(it)
-                if (matcher.find()) {
-                    return matcher.group(1)
-                }
+        for (regex in videoIdRegex) {
+            val compiledPattern = Pattern.compile(regex)
+            val matcher: Matcher = compiledPattern.matcher(linkWithoutDomain(url))
+            if (matcher.find()) {
+                return matcher.group(1)
             }
         }
         return null
@@ -47,12 +45,8 @@ object HelperClass {
         val displayMetrics = DisplayMetrics()
         (context as Activity).windowManager.defaultDisplay.getMetrics(displayMetrics)
 
-        //pixelHeight
-        val height: Int =
-            displayMetrics.heightPixels/2
-
-        //pixelWidth
-        val width: Int = displayMetrics.widthPixels/2
+        val height: Int = displayMetrics.heightPixels / 2
+        val width: Int = displayMetrics.widthPixels / 2
 
         return try {
             website = URL(url)
