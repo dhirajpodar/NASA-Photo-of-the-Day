@@ -17,6 +17,11 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+
+        buildConfigField("String","API_KEY","\"sBioDQXl66F5S2Dh0vCeZvwJhy9mzahtcA0t0qqx\"")
+        buildConfigField("String","YOUTUBE_API_KEY","\"AIzaSyAFUyGiomeqmp1BwjtGp5QesU2-DSdnxtI\"")
+        buildConfigField("String","BASE_URL","\"https://api.nasa.gov/planetary/\"")
     }
     buildTypes {
         release {

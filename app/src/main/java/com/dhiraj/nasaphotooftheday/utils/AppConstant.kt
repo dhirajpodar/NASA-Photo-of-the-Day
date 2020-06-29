@@ -1,9 +1,12 @@
 package com.dhiraj.nasaphotooftheday.utils
 
+import com.dhiraj.nasaphotooftheday.BuildConfig
+
 object AppConstant {
-    val API_KEY = "sBioDQXl66F5S2Dh0vCeZvwJhy9mzahtcA0t0qqx"
-    val IMG_URL_PREFEX = "http://img.youtube.com/vi/"
-    val IMG_URL_SUFFEX = "/default.jpg"
-    val YOUTUBE_API_KEY = "AIzaSyAFUyGiomeqmp1BwjtGp5QesU2-DSdnxtI"
+    val API_KEY: String = BuildConfig.API_KEY
+    val YOUTUBE_API_KEY: String = BuildConfig.YOUTUBE_API_KEY
+    val BASE_URL: String = BuildConfig.BASE_URL
+    const val IMG_URL_PREFEX = "http://img.youtube.com/vi/"
+    const val IMG_URL_SUFFEX = "/default.jpg"
 
 }
