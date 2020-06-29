@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.nasaphotooftheday">
+    package="com.dhiraj.nasaphotooftheday">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -13,11 +13,11 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".main.FullScreenActivity"
+            android:name="com.dhiraj.nasaphotooftheday.main.FullScreenActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
         <activity
-            android:name=".splash.SplashActivity"
+            android:name="com.dhiraj.nasaphotooftheday.splash.SplashActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,7 +26,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".main.MainActivity"
+            android:name="com.dhiraj.nasaphotooftheday.main.MainActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
     </application>
 

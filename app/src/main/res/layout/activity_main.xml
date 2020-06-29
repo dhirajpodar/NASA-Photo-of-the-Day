@@ -5,7 +5,7 @@
 
         <variable
             name="viewModel"
-            type="com.example.nasaphotooftheday.main.MainViewModel" />
+            type="com.dhiraj.nasaphotooftheday.main.MainViewModel" />
 
         <import type="android.view.View" />
     </data>

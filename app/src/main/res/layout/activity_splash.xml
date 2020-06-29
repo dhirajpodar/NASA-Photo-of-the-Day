@@ -4,7 +4,7 @@
 
         <variable
             name="viewModel"
-            type="com.example.nasaphotooftheday.splash.SplashViewModel" />
+            type="com.dhiraj.nasaphotooftheday.splash.SplashViewModel" />
     </data>
 
     <RelativeLayout
